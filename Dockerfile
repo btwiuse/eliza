@@ -65,5 +65,7 @@ ENV OPENAI_API_KEY="<INSERT_YOUR_KEY>"
 # client :5173
 # pnpm start:client
 
+RUN apt update && apt install -y curl jq tmux vim
+
 # Set the command to run the application
 CMD ufo term
