@@ -53,5 +53,9 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/characters ./characters
 
+FROM btwiuse/ufo AS ufo
+
+COPY --from=ufo /usr/bin/ufo /usr/bin/ufo
+
 # Set the command to run the application
-CMD ["pnpm", "start"]
+CMD ufo term
