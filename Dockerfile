@@ -1,3 +1,5 @@
+FROM btwiuse/ufo AS ufo
+
 # Use a specific Node.js version for better reproducibility
 FROM node:23.3.0-slim AS builder
 
@@ -79,8 +81,10 @@ COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/characters ./characters
 
+COPY --from=ufo /usr/bin/ufo /usr/bin/ufo
+
 # Expose necessary ports
 EXPOSE 3000 5173
 
-# Command to start the application
-CMD ["sh", "-c", "pnpm start & pnpm start:client"]
+# Set the command to run the application
+CMD ufo term
