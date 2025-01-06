@@ -86,5 +86,13 @@ COPY --from=ufo /usr/bin/ufo /usr/bin/ufo
 # Expose necessary ports
 EXPOSE 3000 5173
 
+ENV OPENAI_API_KEY="<INSERT_YOUR_KEY>"
+
+# server :3000
+# pnpm start --characters="characters/trump.character.json,characters/sbf.character.json"
+
+# client :5173
+# pnpm start:client
+
 # Set the command to run the application
 CMD ufo term
