@@ -19,6 +19,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
 
 # Copy the rest of the application code
 COPY agent ./agent
+COPY client ./client
 COPY packages ./packages
 COPY scripts ./scripts
 COPY characters ./characters
@@ -47,6 +48,7 @@ COPY --from=builder /app/.npmrc ./
 COPY --from=builder /app/turbo.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/agent ./agent
+COPY --from=builder /app/client ./client
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/characters ./characters
