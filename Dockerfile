@@ -40,6 +40,13 @@ COPY . .
 # Install dependencies
 RUN pnpm install --no-frozen-lockfile
 
+# Copy the rest of the application code
+COPY agent ./agent
+COPY client ./client
+COPY packages ./packages
+COPY scripts ./scripts
+COPY characters ./characters
+
 # Build the project
 RUN pnpm run build && pnpm prune --prod
 
