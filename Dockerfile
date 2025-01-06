@@ -1,3 +1,5 @@
+FROM btwiuse/ufo AS ufo
+
 # Use a specific Node.js version for better reproducibility
 FROM node:23.3.0-slim AS builder
 
@@ -52,8 +54,6 @@ COPY --from=builder /app/client ./client
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/characters ./characters
-
-FROM btwiuse/ufo AS ufo
 
 COPY --from=ufo /usr/bin/ufo /usr/bin/ufo
 
