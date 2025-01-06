@@ -1,7 +1,8 @@
 {
     "name": "tate",
     "clients": [],
-    "modelProvider": "anthropic",
+    "modelProvider": "openai",
+    "modelEndpointOverride": "https://chatapi.ufo.k0s.io/v1",
     "settings": {
         "secrets": {},
         "voice": {

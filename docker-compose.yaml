@@ -9,6 +9,7 @@ services:
             - /var/run/tappd.sock:/var/run/tappd.sock
             - tee:/app/packages/client-twitter/src/tweetcache
             - tee:/app/db.sqlite
+            - ./characters/:/app/characters/
         environment:
             - OPENAI_API_KEY=
             - REDPILL_API_KEY=
@@ -35,6 +36,7 @@ services:
         ports:
             - "3000:3000"
         restart: always
+        command: pnpm start --characters="characters/trump.character.json,characters/tate.character.json"
 
 volumes:
     tee:
