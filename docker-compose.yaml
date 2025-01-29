@@ -38,7 +38,7 @@ services:
             - "3000:3000"
             - "5173:5173"
         restart: always
-        command: pnpm start --characters="characters/trump.character.json,characters/sbf.character.json"
+        command: pnpm start --characters="characters/trump.character.json,characters/tate.character.json"
 
 volumes:
     eliza:
