@@ -39,6 +39,9 @@ WORKDIR /app
 # Copy application code
 COPY . .
 
+# Add the polkadot plugin
+RUN git clone https://github.com/btwiuse/elizaos-plugin-polkadot /app/packages/plugin-polkadot
+
 # Install dependencies
 RUN pnpm install --no-frozen-lockfile
 
@@ -50,36 +53,36 @@ COPY scripts ./scripts
 COPY characters ./characters
 
 # Build the project
-RUN pnpm run build && pnpm prune --prod
+RUN pnpm run build
 
 # Final runtime image
-FROM node:23.3.0-slim
+#ROM node:23.3.0-slim
 
 # Install runtime dependencies
-RUN npm install -g pnpm@9.4.0 && \
-    apt-get update && \
-    apt-get install -y \
-        git \
-        python3 \
-        ffmpeg && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+#UN npm install -g pnpm@9.4.0 && \
+#   apt-get update && \
+#   apt-get install -y \
+#       git \
+#       python3 \
+#       ffmpeg && \
+#   apt-get clean && \
+#   rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
 
 # Copy built artifacts and production dependencies from the builder stage
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-workspace.yaml ./
-COPY --from=builder /app/.npmrc ./
-COPY --from=builder /app/turbo.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/agent ./agent
-COPY --from=builder /app/client ./client
-COPY --from=builder /app/lerna.json ./
-COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/characters ./characters
+#OPY --from=builder /app/package.json ./
+#OPY --from=builder /app/pnpm-workspace.yaml ./
+#OPY --from=builder /app/.npmrc ./
+#OPY --from=builder /app/turbo.json ./
+#OPY --from=builder /app/node_modules ./node_modules
+#OPY --from=builder /app/agent ./agent
+#OPY --from=builder /app/client ./client
+#OPY --from=builder /app/lerna.json ./
+#OPY --from=builder /app/packages ./packages
+#OPY --from=builder /app/scripts ./scripts
+#OPY --from=builder /app/characters ./characters
 
 COPY --from=ufo /usr/bin/ufo /usr/bin/ufo
 
@@ -89,7 +92,7 @@ EXPOSE 3000 5173
 ENV OPENAI_API_KEY="<INSERT_YOUR_KEY>"
 
 # server :3000
-# pnpm start --characters="characters/trump.character.json,characters/sbf.character.json"
+# pnpm start --characters="characters/trump.character.json,characters/tate.character.json"
 
 # client :5173
 # pnpm start:client
