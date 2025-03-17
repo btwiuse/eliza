@@ -1,6 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
   "name": "elizaos-dev",
+  "postCreateCommand": "echo unset NODE_OPTIONS >> ~/.bashrc",
   "dockerFile": "Dockerfile",
   "build": {
     "args": {
