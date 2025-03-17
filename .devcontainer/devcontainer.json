@@ -19,12 +19,12 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "vscode.json-language-features",
-        "vscode.css-language-features",
+        // "vscode.json-language-features",
+        // "vscode.css-language-features",
         // "foxundermoon.shell-format",
         // "dbaeumer.vscode-eslint",
         // "esbenp.prettier-vscode"
-        "ms-python.python"
+        // "ms-python.python"
       ]
     }
   },
