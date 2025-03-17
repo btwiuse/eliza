@@ -2,7 +2,7 @@ import type { Agent, Character, UUID, Memory } from '@elizaos/core';
 import { WorldManager } from './world-manager';
 
 const API_PREFIX = '/api';
-const BASE_URL = `http://localhost:${import.meta.env.VITE_SERVER_PORT}${API_PREFIX}`;
+const BASE_URL = `${API_PREFIX}`;
 
 /**
  * A function that handles fetching data from a specified URL with various options.

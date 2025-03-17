@@ -4,7 +4,7 @@ import EventEmitter from 'eventemitter3';
 import { io, type Socket } from 'socket.io-client';
 import { WorldManager } from './world-manager';
 
-const BASE_URL = `http://localhost:${import.meta.env.VITE_SERVER_PORT}`;
+const BASE_URL = `/`;
 
 /**
  * SocketIOManager handles real-time communication between the client and server
