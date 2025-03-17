@@ -1,4 +1,4 @@
-ARG NODE_VER=23.5.0
+ARG NODE_VER=23.3.0
 ARG BASE_IMAGE=node:${NODE_VER}
 FROM $BASE_IMAGE
 
@@ -13,6 +13,9 @@ RUN apt-get update \
     g++ \
     nano \
     vim \
+    sudo \
+    less \
+    build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
