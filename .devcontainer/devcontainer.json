@@ -4,19 +4,13 @@
   "dockerFile": "Dockerfile",
   "build": {
     "args": {
-      "NODE_VER": "23.5.0",
+      "NODE_VER": "23.3.0",
       "BUN_VER": "1.2.2"
     }
   },
   "privileged": true,
   "runArgs": [
-    "-p=3000:3000", // Add port for server api
-    "-p=5173:5173", // Add port for client
-    //"--volume=/usr/lib/wsl:/usr/lib/wsl", // uncomment for WSL
-    //"--volume=/mnt/wslg:/mnt/wslg", // uncomment for WSL
-    "--gpus=all", // ! uncomment for vGPU
-    //"--device=/dev/dxg", // uncomment this for vGPU under WSL
-    "--device=/dev/dri"
+    "--network=host"
   ],
   "containerEnv": {
     //"MESA_D3D12_DEFAULT_ADAPTER_NAME": "NVIDIA", // uncomment for WSL
