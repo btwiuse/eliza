@@ -1,5 +1,4 @@
 import {
-  getGitHubCredentials,
   getLocalPackages,
   isMonorepoContext,
   resolveEnvFile,
@@ -294,19 +293,12 @@ export async function getLocalRegistryIndex(): Promise<Record<string, string>> {
  */
 export async function getRegistryIndex(): Promise<Record<string, string>> {
   const settings = await getRegistrySettings();
-  const credentials = await getGitHubCredentials();
-
-  if (!credentials) {
-    logger.error('GitHub credentials not found. Please run login first.');
-    process.exit(1);
-  }
 
   const [owner, repo] = settings.defaultRegistry.split('/');
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/index.json`;
 
   const response = await fetch(url, {
     headers: {
-      Authorization: `token ${credentials.token}`,
       Accept: 'application/vnd.github.v3.raw',
     },
   });
@@ -450,12 +442,6 @@ export async function listPluginsByType(type?: string): Promise<string[]> {
 
 export async function getPluginMetadata(pluginName: string): Promise<PluginMetadata | null> {
   const settings = await getRegistrySettings();
-  const credentials = await getGitHubCredentials();
-
-  if (!credentials) {
-    logger.error('GitHub credentials not found. Please run login first.');
-    process.exit(1);
-  }
 
   const [owner, repo] = settings.defaultRegistry.split('/');
   const normalizedName = pluginName.replace(/^@elizaos\//, '');
@@ -464,7 +450,6 @@ export async function getPluginMetadata(pluginName: string): Promise<PluginMetad
   try {
     const response = await fetch(url, {
       headers: {
-        Authorization: `token ${credentials.token}`,
         Accept: 'application/vnd.github.v3.raw',
       },
     });
