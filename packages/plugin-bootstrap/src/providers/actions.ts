@@ -1,5 +1,24 @@
 import type { Action, IAgentRuntime, Memory, Provider, State } from '@elizaos/core';
 import { addHeader, composeActionExamples, formatActionNames, formatActions } from '@elizaos/core';
+import { logger } from '@elizaos/core';
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      resolve(null); // Timeout reached
+    }, ms);
+
+    promise
+      .then((result) => {
+        clearTimeout(timeout);
+        resolve(result);
+      })
+      .catch(() => {
+        clearTimeout(timeout);
+        resolve(null); // Consider failed validations as null
+      });
+  });
+}
 
 /**
  * A provider object that fetches possible response actions based on the provided runtime, message, and state.
@@ -41,13 +60,14 @@ export const actionsProvider: Provider = {
     // Get actions that validate for this message
     const actionPromises = runtime.actions.map(async (action: Action) => {
       try {
-        const result = await action.validate(runtime, message, state);
+        const result = await withTimeout(action.validate(runtime, message, state), 2000);
         if (result) {
           return action;
         }
       } catch (e) {
         console.error('ACTIONS GET -> validate err', action, e);
       }
+      logger.warn(`ACTION ${action.name} validation timed out`);
       return null;
     });
 
@@ -57,6 +77,7 @@ export const actionsProvider: Provider = {
 
     // Format action-related texts
     const actionNames = `Possible response actions: ${formatActionNames(actionsData)}`;
+    logger.info(actionNames);
 
     const actionsWithDescriptions =
       actionsData.length > 0 ? addHeader('# Available Actions', formatActions(actionsData)) : '';
