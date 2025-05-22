@@ -1,5 +1,7 @@
 # Eliza 🤖
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/btwiuse/eliza)
+
 <div align="center">
   <img src="./docs/static/img/eliza_banner.jpg" alt="Eliza Banner" width="100%" />
 </div>
