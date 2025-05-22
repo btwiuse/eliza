@@ -2,6 +2,8 @@
 
 A framework for multi-agent development and deployment
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/btwiuse/eliza)
+
 ## ✨ Features
 
 - 🛠️ Full-featured Discord, Telegram, and Farcaster connectors (and many more!)
