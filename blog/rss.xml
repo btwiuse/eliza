@@ -524,7 +524,7 @@
 <p><a href="https://eliza.how/assets/files/jintern-3157a38979ec1bc2ff5c4371e1137a36.jpg" target="_blank"><img decoding="async" loading="lazy" alt="jintern2" src="https://eliza.how/assets/images/jintern-3157a38979ec1bc2ff5c4371e1137a36.jpg" width="950" height="525" class="img__Ss2"></a></p>
 <p>While we're analyzing tech support channels, we can identify gaps in docs based on common community questions which can then be addressed systematically. This may involve checking if any github issues or pull requests already address a question, and if not, then to help create an issue for it. Herein lies a powerful feedback loop:</p>
 <ul>
-<li>Aggregate &amp; Analyze: Extract questions and answers, who is helping who (and if succesful), identify pain points, gather sentiment</li>
+<li>Aggregate &amp; Analyze: Extract questions and answers, who is helping who (and if successful), identify pain points, gather sentiment</li>
 <li>Clean &amp; Enhance Data, Update docs, create bug reports</li>
 <li>RAG Knowledge: AI Agents giving automated responses to FAQ</li>
 </ul>
