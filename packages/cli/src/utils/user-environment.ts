@@ -106,7 +106,7 @@ export class UserEnvironment {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
       const versionFilePath = path.resolve(__dirname, '../version.json');
-      
+
       if (existsSync(versionFilePath)) {
         try {
           const versionData = JSON.parse(await fs.readFile(versionFilePath, 'utf8'));

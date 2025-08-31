@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 /**
  * Build script for @elizaos/cli using standardized build utilities
+ * 
+ * Note: version.json is generated during build from package.json
+ * This ensures it always has the current version after lerna bump
  */
 
 import { createBuildRunner, copyAssets } from '../../build-utils';
@@ -8,7 +11,7 @@ import { $ } from 'bun';
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
-// Read version from package.json
+// Read version from package.json - this will be the post-lerna-bump version
 const packageJsonPath = path.resolve(process.cwd(), 'package.json');
 const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
 const cliVersion = packageJson.version;
@@ -49,7 +52,7 @@ const run = createBuildRunner({
   },
   onBuildComplete: async (success) => {
     if (success) {
-      // Copy templates, migration guides, and package.json to dist
+            // Copy templates, migration guides, and package.json to dist
       console.log('\nCopying assets...');
       await copyAssets([
         { from: './templates', to: './dist/templates' },
@@ -58,9 +61,10 @@ const run = createBuildRunner({
       ]);
       
       // Create a version file in dist to ensure version is available at runtime
+      // This is created from the same package.json that was just copied
       const versionFilePath = path.resolve(process.cwd(), 'dist/version.json');
       writeFileSync(versionFilePath, JSON.stringify({ version: cliVersion }), 'utf-8');
-      console.log(`✓ Version file created: ${versionFilePath}`);
+      console.log(`✓ Version file created: ${versionFilePath} (v${cliVersion})`);
     }
   },
 });

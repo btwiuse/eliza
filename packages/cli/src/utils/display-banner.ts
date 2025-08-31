@@ -66,7 +66,7 @@ export function getVersion(): string {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const versionFilePath = path.resolve(__dirname, '../version.json');
-  
+
   if (existsSync(versionFilePath)) {
     try {
       const versionData = JSON.parse(readFileSync(versionFilePath, 'utf-8'));
