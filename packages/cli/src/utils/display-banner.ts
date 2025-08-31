@@ -79,9 +79,7 @@ export function getVersion(): string {
   }
 
   // 4. Try to find package.json in various locations
-  // Use import.meta.url for runtime path resolution
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+  // __filename and __dirname already defined above
 
   const possiblePaths = [
     // Try dist/package.json first (for published package)
