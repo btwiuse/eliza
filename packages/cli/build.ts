@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Build script for @elizaos/cli using standardized build utilities
- * 
+ *
  * Note: version.json is generated during build from package.json
  * This ensures it always has the current version after lerna bump
  */
@@ -52,14 +52,14 @@ const run = createBuildRunner({
   },
   onBuildComplete: async (success) => {
     if (success) {
-            // Copy templates, migration guides, and package.json to dist
+      // Copy templates, migration guides, and package.json to dist
       console.log('\nCopying assets...');
       await copyAssets([
         { from: './templates', to: './dist/templates' },
         { from: './package.json', to: './dist/package.json' }, // Include package.json in dist
         { from: '../docs/docs/plugins/migration/claude-code', to: './dist/migration-guides' },
       ]);
-      
+
       // Create a version file in dist to ensure version is available at runtime
       // This is created from the same package.json that was just copied
       const versionFilePath = path.resolve(process.cwd(), 'dist/version.json');

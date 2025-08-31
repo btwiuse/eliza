@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import os from 'node:os';
+// import os from 'node:os';
 import { bunExecSimple } from './bun-exec';
 import { UserEnvironment } from './user-environment';
 
@@ -13,32 +13,8 @@ export function isRunningFromNodeModules(): boolean {
   return __filename.includes('node_modules');
 }
 
-/**
- * Helper to find global node_modules paths for various package managers
- */
-function getGlobalNodeModulesPaths(): string[] {
-  const paths = [];
-
-  // Bun global install location
-  if (process.env.BUN_INSTALL) {
-    paths.push(path.join(process.env.BUN_INSTALL, 'install/global/node_modules'));
-  }
-
-  // NPM global paths
-  if (process.env.PREFIX) {
-    paths.push(path.join(process.env.PREFIX, 'lib/node_modules'));
-  }
-
-  // Common locations
-  paths.push(
-    path.join(os.homedir(), '.bun/install/global/node_modules'),
-    path.join(os.homedir(), '.npm/global/node_modules'),
-    '/usr/local/lib/node_modules',
-    '/usr/lib/node_modules'
-  );
-
-  return paths;
-}
+// Removed global path scanning utility to avoid relying on environment-specific
+// globals and to prevent accidental embedding of CI paths in builds.
 
 // Function to get the package version
 // --- Utility: Get local CLI version from package.json ---
@@ -78,34 +54,20 @@ export function getVersion(): string {
     }
   }
 
-  // 4. Try to find package.json in various locations
-  // __filename and __dirname already defined above
-
-  const possiblePaths = [
-    // Try dist/package.json first (for published package)
+  // 4. Try to find package.json relative to dist (published package)
+  const relativeCandidates = [
     path.resolve(__dirname, 'package.json'),
     path.resolve(__dirname, '../package.json'),
-    path.resolve(__dirname, '../../package.json'),
-    // For NPM global install
-    path.resolve(__dirname, '../../../package.json'),
   ];
-
-  // Also check global node_modules paths
-  const globalPaths = getGlobalNodeModulesPaths();
-  for (const globalPath of globalPaths) {
-    possiblePaths.push(path.join(globalPath, '@elizaos/cli/package.json'));
-    possiblePaths.push(path.join(globalPath, '@elizaos/cli/dist/package.json'));
-  }
-
-  for (const packageJsonPath of possiblePaths) {
-    if (existsSync(packageJsonPath)) {
+  for (const candidate of relativeCandidates) {
+    if (existsSync(candidate)) {
       try {
-        const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-        if (packageJson.name === '@elizaos/cli' && packageJson.version) {
-          return packageJson.version;
+        const pkg = JSON.parse(readFileSync(candidate, 'utf-8'));
+        if (pkg?.name === '@elizaos/cli' && pkg.version) {
+          return pkg.version as string;
         }
-      } catch (error) {
-        // Continue to next path - don't log errors as this is expected
+      } catch {
+        // continue
       }
     }
   }

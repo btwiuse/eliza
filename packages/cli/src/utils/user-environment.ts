@@ -103,10 +103,11 @@ export class UserEnvironment {
         };
       }
 
-      // Prefer resolving the installed CLI package.json via Node's resolver
+      // Prefer resolving the installed CLI package.json via Node's resolver (with dynamic spec)
       try {
         const req = createRequire(import.meta.url);
-        const pkgPath = req.resolve('@elizaos/cli/package.json');
+        const pkgSpec = '@elizaos' + '/cli/package.json';
+        const pkgPath = req.resolve(pkgSpec);
         if (existsSync(pkgPath)) {
           const pkgJson = JSON.parse(await fs.readFile(pkgPath, 'utf-8'));
           if (pkgJson?.name === '@elizaos/cli') {
