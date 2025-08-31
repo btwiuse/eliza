@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 import { logger } from '@elizaos/core';
 import { isQuietMode } from './spinner-utils';
+import { createRequire } from 'node:module';
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -148,6 +149,18 @@ export async function copyTemplate(
     path.resolve(__dirname, '../../templates', packageName),
     // 2. Relative to dist (for built package)
     path.resolve(__dirname, '../templates', packageName),
+    // 2.5 Resolve from installed package root via Node's resolver
+    (() => {
+      try {
+        const req = createRequire(import.meta.url);
+        const pkgPath = req.resolve('@elizaos/cli/package.json');
+        const pkgDir = path.dirname(pkgPath);
+        const candidate = path.join(pkgDir, 'dist', 'templates', packageName);
+        return candidate;
+      } catch {
+        return '__NO_MATCH__';
+      }
+    })(),
     // 3. For NPM global install - check known global locations
     ...getGlobalNodeModulesPaths().map((p) =>
       path.join(p, '@elizaos/cli/dist/templates', packageName)
@@ -190,28 +203,17 @@ export async function copyTemplate(
   try {
     // Get the CLI package version for dependency updates - try multiple locations
     let cliPackageVersion = 'latest';
-    const possiblePackageJsonPaths = [
-      // Try dist/package.json first (for published package)
-      path.resolve(__dirname, 'package.json'),
-      path.resolve(__dirname, '../package.json'),
-      path.resolve(__dirname, '../../package.json'),
-      ...getGlobalNodeModulesPaths().map((p) => path.join(p, '@elizaos/cli/package.json')),
-      ...getGlobalNodeModulesPaths().map((p) => path.join(p, '@elizaos/cli/dist/package.json')),
-      path.resolve(process.cwd(), 'node_modules/@elizaos/cli/package.json'),
-    ];
-
-    for (const possiblePath of possiblePackageJsonPaths) {
-      if (existsSync(possiblePath)) {
-        try {
-          const packageJson = JSON.parse(await fs.readFile(possiblePath, 'utf8'));
-          if (packageJson.name === '@elizaos/cli' && packageJson.version) {
-            cliPackageVersion = packageJson.version;
-            break;
-          }
-        } catch (error) {
-          // Continue to next path
+    try {
+      const req = createRequire(import.meta.url);
+      const pkgPath = req.resolve('@elizaos/cli/package.json');
+      if (existsSync(pkgPath)) {
+        const packageJson = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
+        if (packageJson.name === '@elizaos/cli' && packageJson.version) {
+          cliPackageVersion = packageJson.version;
         }
       }
+    } catch {
+      // ignore, fallback stays 'latest'
     }
 
     const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));

@@ -9,6 +9,7 @@ import { resolveEnvFile } from './resolve-utils';
 import { emoji } from './emoji-handler';
 import { autoInstallBun, shouldAutoInstall } from './auto-install-bun';
 import { bunExecSimple } from './bun-exec';
+import { createRequire } from 'node:module';
 
 // Types
 interface OSInfo {
@@ -100,6 +101,24 @@ export class UserEnvironment {
           name: '@elizaos/cli',
           path: process.argv[1] || '',
         };
+      }
+
+      // Prefer resolving the installed CLI package.json via Node's resolver
+      try {
+        const req = createRequire(import.meta.url);
+        const pkgPath = req.resolve('@elizaos/cli/package.json');
+        if (existsSync(pkgPath)) {
+          const pkgJson = JSON.parse(await fs.readFile(pkgPath, 'utf-8'));
+          if (pkgJson?.name === '@elizaos/cli') {
+            return {
+              version: pkgJson.version || 'unknown',
+              name: pkgJson.name,
+              path: process.argv[1] || '',
+            };
+          }
+        }
+      } catch {
+        // fall through to other strategies
       }
 
       // Try to read version from version.json file (for published package)

@@ -6,6 +6,7 @@ import { startAgent, stopAgent } from './agent-start';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 
 /**
  * Server start options
@@ -43,6 +44,19 @@ export async function startAgents(options: ServerStartOptions): Promise<void> {
   // In development/monorepo: packages/cli/dist/commands/start/actions -> packages/cli/dist
   // In production/global: node_modules/@elizaos/cli/dist/commands/start/actions -> node_modules/@elizaos/cli/dist
   let cliDistPath = path.resolve(__dirname, '../../../');
+
+  // Prefer resolving the installed CLI package root via Node resolver
+  try {
+    const req = createRequire(import.meta.url);
+    const pkgPath = req.resolve('@elizaos/cli/package.json');
+    const pkgDir = path.dirname(pkgPath);
+    const candidate = path.join(pkgDir, 'dist');
+    if (existsSync(path.join(candidate, 'index.html'))) {
+      cliDistPath = candidate;
+    }
+  } catch {
+    // fall back to path ascent logic below
+  }
 
   // Verify the path contains index.html, if not try alternative resolution
   const indexPath = path.join(cliDistPath, 'index.html');
