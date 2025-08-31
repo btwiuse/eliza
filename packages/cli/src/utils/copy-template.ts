@@ -191,9 +191,12 @@ export async function copyTemplate(
     // Get the CLI package version for dependency updates - try multiple locations
     let cliPackageVersion = 'latest';
     const possiblePackageJsonPaths = [
-      path.resolve(__dirname, '../../package.json'),
+      // Try dist/package.json first (for published package)
+      path.resolve(__dirname, 'package.json'),
       path.resolve(__dirname, '../package.json'),
+      path.resolve(__dirname, '../../package.json'),
       ...getGlobalNodeModulesPaths().map((p) => path.join(p, '@elizaos/cli/package.json')),
+      ...getGlobalNodeModulesPaths().map((p) => path.join(p, '@elizaos/cli/dist/package.json')),
       path.resolve(process.cwd(), 'node_modules/@elizaos/cli/package.json'),
     ];
 

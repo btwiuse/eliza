@@ -62,11 +62,30 @@ export function getVersion(): string {
     return process.env.ELIZAOS_CLI_VERSION;
   }
 
+  // 3.5. Try to read version from version.json file (for published package)
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const versionFilePath = path.resolve(__dirname, '../version.json');
+  
+  if (existsSync(versionFilePath)) {
+    try {
+      const versionData = JSON.parse(readFileSync(versionFilePath, 'utf-8'));
+      if (versionData.version) {
+        return versionData.version;
+      }
+    } catch (error) {
+      // Continue to other methods
+    }
+  }
+
   // 4. Try to find package.json in various locations
+  // Use import.meta.url for runtime path resolution
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
 
   const possiblePaths = [
+    // Try dist/package.json first (for published package)
+    path.resolve(__dirname, 'package.json'),
     path.resolve(__dirname, '../package.json'),
     path.resolve(__dirname, '../../package.json'),
     // For NPM global install

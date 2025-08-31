@@ -5,13 +5,16 @@
 
 import { createBuildRunner, copyAssets } from '../../build-utils';
 import { $ } from 'bun';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 // Read version from package.json
 const packageJsonPath = path.resolve(process.cwd(), 'package.json');
 const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
 const cliVersion = packageJson.version;
+
+// Set the version as an environment variable for the build
+process.env.ELIZAOS_CLI_VERSION = cliVersion;
 
 // Custom pre-build step to copy templates
 async function preBuild() {
@@ -42,10 +45,6 @@ const run = createBuildRunner({
     minify: false,
     isCli: true,
     generateDts: true,
-    // Embed CLI version as environment variable
-    define: {
-      'process.env.ELIZAOS_CLI_VERSION': JSON.stringify(cliVersion),
-    },
     // Assets will be copied after build via onBuildComplete
   },
   onBuildComplete: async (success) => {
@@ -57,6 +56,11 @@ const run = createBuildRunner({
         { from: './package.json', to: './dist/package.json' }, // Include package.json in dist
         { from: '../docs/docs/plugins/migration/claude-code', to: './dist/migration-guides' },
       ]);
+      
+      // Create a version file in dist to ensure version is available at runtime
+      const versionFilePath = path.resolve(process.cwd(), 'dist/version.json');
+      writeFileSync(versionFilePath, JSON.stringify({ version: cliVersion }), 'utf-8');
+      console.log(`✓ Version file created: ${versionFilePath}`);
     }
   },
 });

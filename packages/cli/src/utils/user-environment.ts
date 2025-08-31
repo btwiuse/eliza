@@ -93,9 +93,6 @@ export class UserEnvironment {
   private async getCLIInfo(): Promise<CLIInfo> {
     logger.debug('[UserEnvironment] Getting CLI information');
     try {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
-
       // Check environment variable first (set during build)
       if (process.env.ELIZAOS_CLI_VERSION) {
         return {
@@ -105,11 +102,34 @@ export class UserEnvironment {
         };
       }
 
+      // Try to read version from version.json file (for published package)
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const versionFilePath = path.resolve(__dirname, '../version.json');
+      
+      if (existsSync(versionFilePath)) {
+        try {
+          const versionData = JSON.parse(await fs.readFile(versionFilePath, 'utf8'));
+          if (versionData.version) {
+            return {
+              version: versionData.version,
+              name: '@elizaos/cli',
+              path: process.argv[1] || '',
+            };
+          }
+        } catch (error) {
+          // Continue to other methods
+        }
+      }
+
       // Try multiple locations to find package.json
       const possiblePaths = [
+        // Try dist/package.json first (for published package)
         path.resolve(__dirname, '../package.json'),
         path.resolve(__dirname, '../../package.json'),
         path.resolve(__dirname, '../../../package.json'),
+        // Add fallback for built package in dist directory
+        path.resolve(__dirname, 'package.json'),
       ];
 
       // Also check global node_modules paths
